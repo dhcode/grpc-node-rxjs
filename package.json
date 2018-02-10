@@ -2,13 +2,18 @@
   "name": "grpc-node-rxjs",
   "version": "0.0.1",
   "description": "ReactiveX wrapper for grpc-node TypeScript projects",
-  "main": "index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "build-ts": "tsc",
+    "prepack": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "generate-proto-typings": "ts-node src/generateTs.ts test-res/testservice.proto -o test-res/grpc-namespaces.ts"
+  },
+  "bin": {
+    "grpc-node-rxjs": "./dist/src/generateTs.js"
   },
   "keywords": [
     "grpc",
@@ -19,7 +24,7 @@
   "author": "Dominik Herbst",
   "license": "MIT",
   "dependencies": {
-    "grpc": "^1.9.0",
+    "grpc": "^1.8.4",
     "protobufjs": "^6.8.4",
     "rxjs": "^5.5.6"
   },

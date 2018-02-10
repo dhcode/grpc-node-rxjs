@@ -147,6 +147,10 @@ if (!module.parent) {
         }
 
     }
+    if (!files.length) {
+        console.log('No files');
+        process.exit(1);
+    }
     generateTs(files).then(result => {
         if (output === 'stdout') {
             process.stdout.write(result);
