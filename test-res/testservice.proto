@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package grpctest;
+
+enum Position {
+    ONE = 0;
+    TWO = 1;
+}
+
+/*
+The TestRunner service
+*/
+service TestRunner {
+    rpc UnaryMethod(TestRequest) returns (TestResponse) {}
+    rpc StreamRequestMethod(stream TestRequest) returns (TestResponse) {}
+    rpc StreamResponseMethod(TestRequest) returns (stream TestResponse) {}
+    rpc TestBidirectionalStream(stream TestRequest) returns (stream TestResponse) {}
+}
+
+message TestRequest {
+    string name = 1;
+}
+
+message TestResponse {
+    string message = 1;
+    Position position = 2;
+}
