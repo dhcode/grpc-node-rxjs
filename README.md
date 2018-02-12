@@ -12,21 +12,57 @@ Install it:
 
 ## Generate types
 
-Generate typing for your proto files:
+Generate typing for your proto files.
+Usage:
+
+    rpc-node-rxjs file1.proto [file2.proto] [-o namespaces.ts]
+
+Example:
 
     grpc-node-rxjs proto/testservice.proto -o proto/grpc-namespaces.ts
 
+
 ## Server example
+
+See [src/GrpcRx.spec.ts](src/GrpcRx.spec.ts) for more examples.
 
 ```typescript
 import { createServer } from 'grpc-node-rxjs';
-// TODO
+import { Observable } from 'rxjs/Observable';
+import * as grpc from 'grpc';
+import { of } from 'rxjs/observable/of';
+import { grpctest } from './test-res/grpc-namespaces';
+
+const PROTO_PATH = __dirname + '/test-res/testservice.proto';
+
+const server: grpctest.Server = createServer<grpctest.Server>(PROTO_PATH, 'grpctest');
+server.addTestRunner({
+     UnaryMethod(request: grpctest.TestRequest,
+                 metaData?: grpc.Metadata): Observable<grpctest.TestResponse> {
+         return of({message: 'unary ' + request.name, position: grpctest.Position.ONE});
+     }
+});
+server.bind('127.0.0.1:5120', grpc.ServerCredentials.createInsecure());
+server.start();
+
 ```
 
 ## Client example
 
 ```typescript
-// TODO
+import { createClient } from 'grpc-node-rxjs';
+import { grpctest } from './test-res/grpc-namespaces';
+import * as grpc from 'grpc';
+
+const PROTO_PATH = __dirname + '/test-res/testservice.proto';
+
+const client = createClient<grpctest.ClientBuilder>(PROTO_PATH, 'grpctest');
+const testRunner = client.getTestRunner('127.0.0.1:5120', grpc.credentials.createInsecure());
+const metaData = new grpc.Metadata();
+metaData.set('special', 'x');
+testRunner.UnaryMethod({name: 'a'}, metaData).subscribe(response => {
+    console.log('response', response);
+});
 ```
 
 

@@ -1,15 +1,26 @@
-import protobuf = require('protobufjs');
+import * as protobuf from 'protobufjs';
 import { Enum, Field, Method, Namespace, ReflectionObject, Service, Type } from 'protobufjs';
 import * as fs from 'fs';
 import * as util from 'util';
 import NestedWriter from './utils/NestedWriter';
 
-export async function generateTs(files): Promise<string> {
+export async function generateTsFromFile(files): Promise<string> {
 
     const root = new protobuf.Root();
-
     await root.load(files);
 
+    return generateFromRoot(root);
+}
+
+export async function generateTsFromString(...protoSources: string[]): Promise<string> {
+
+    const root = new protobuf.Root();
+    protoSources.forEach(source => protobuf.parse(source, root));
+
+    return generateFromRoot(root);
+}
+
+function generateFromRoot(root: protobuf.Root) {
     const target = new NestedWriter();
     target.writeLine(`import { Observable } from 'rxjs/Observable';`);
     target.writeLine(`import * as grpc from 'grpc';`).writeLine();
@@ -134,8 +145,7 @@ function printField(source: Field, target: NestedWriter) {
     target.writeLine(source.name + ': ' + source.type + ';');
 }
 
-
-if (!module.parent) {
+export function cli() {
     let output = 'stdout';
     const files = process.argv.slice(2);
     for (let i = 0; i < files.length; i++) {
@@ -149,13 +159,19 @@ if (!module.parent) {
     }
     if (!files.length) {
         console.log('No files');
+        console.log('Usage:');
+        console.log('grpc-node-rxjs file1.proto [file2.proto] [-o namespaces.ts]');
         process.exit(1);
     }
-    generateTs(files).then(result => {
+    generateTsFromFile(files).then(result => {
         if (output === 'stdout') {
             process.stdout.write(result);
         } else {
             return util.promisify(fs.writeFile)(output, result);
         }
     }).catch(console.error);
+}
+
+if (!module.parent) {
+    cli();
 }

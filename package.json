@@ -13,7 +13,11 @@
     "generate-proto-typings": "ts-node src/generateTs.ts test-res/testservice.proto -o test-res/grpc-namespaces.ts"
   },
   "bin": {
-    "grpc-node-rxjs": "./dist/src/generateTs.js"
+    "grpc-node-rxjs": "./bin/grpc-node-rxjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dhcode/grpc-node-rxjs.git"
   },
   "keywords": [
     "grpc",
