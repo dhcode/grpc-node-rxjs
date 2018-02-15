@@ -1,5 +1,5 @@
 import * as protobuf from 'protobufjs';
-import { Enum, Field, Method, Namespace, ReflectionObject, Service, Type } from 'protobufjs';
+import {Enum, Field, Method, Namespace, ReflectionObject, Service, Type} from 'protobufjs';
 import * as fs from 'fs';
 import * as util from 'util';
 import NestedWriter from './utils/NestedWriter';
@@ -55,6 +55,9 @@ function print(nested: ReflectionObjectsMap, target: NestedWriter) {
 }
 
 function printNamespace(source: Namespace, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     target.writeLine('export namespace ' + source.name + ' {').inc();
     print(source.nested, target);
     printServer(source.nested, target);
@@ -106,7 +109,19 @@ function printClient(nested: ReflectionObjectsMap, target: NestedWriter) {
 
 }
 
+function printComment(comment: string, target: NestedWriter) {
+    target.writeLine();
+    target.writeLine('/**');
+    comment.split('\n').forEach(line => {
+        target.writeLine(' * ' + line);
+    });
+    target.writeLine(' */');
+}
+
 function printService(source: Service, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     target.writeLine('export interface ' + source.name + ' {').inc();
 
     for (let method of Object.keys(source.methods)) {
@@ -117,11 +132,17 @@ function printService(source: Service, target: NestedWriter) {
 }
 
 function printMethod(source: Method, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     const reqType = source.requestStream ? `Observable<${source.requestType}>` : source.requestType;
     target.writeLine(`${source.name}(request: ${reqType}, metaData?: grpc.Metadata): Observable<${source.responseType}>;`);
 }
 
 function printType(source: Type, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     target.writeLine('export interface ' + source.name + ' {').inc();
 
     for (let field of Object.keys(source.fields)) {
@@ -132,6 +153,9 @@ function printType(source: Type, target: NestedWriter) {
 }
 
 function printEnum(source: Enum, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     target.writeLine('export enum ' + source.name + ' {').inc();
 
     for (let value of Object.keys(source.values)) {
@@ -142,6 +166,9 @@ function printEnum(source: Enum, target: NestedWriter) {
 }
 
 function printField(source: Field, target: NestedWriter) {
+    if (source.comment) {
+        printComment(source.comment, target);
+    }
     target.writeLine(source.name + ': ' + source.type + ';');
 }
 

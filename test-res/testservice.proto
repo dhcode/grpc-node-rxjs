@@ -7,18 +7,22 @@ enum Position {
     TWO = 1;
 }
 
-/*
-The TestRunner service
-*/
+/**
+ * The TestRunner service
+ * It has several methods to test all the different scenarios.
+ */
 service TestRunner {
+    /// Takes a request and returns a single response
     rpc UnaryMethod(TestRequest) returns (TestResponse) {}
+
+    /// Takes a stream of requests
     rpc StreamRequestMethod(stream TestRequest) returns (TestResponse) {}
     rpc StreamResponseMethod(TestRequest) returns (stream TestResponse) {}
     rpc TestBidirectionalStream(stream TestRequest) returns (stream TestResponse) {}
 }
 
 message TestRequest {
-    string name = 1;
+    string name = 1; /// Name
 }
 
 message TestResponse {

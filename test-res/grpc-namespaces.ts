@@ -7,14 +7,31 @@ export namespace grpctest {
         TWO = 1,
     }
 
+
+    /**
+     * The TestRunner service
+     * It has several methods to test all the different scenarios.
+     */
     export interface TestRunner {
+
+        /**
+         * Takes a request and returns a single response
+         */
         UnaryMethod(request: TestRequest, metaData?: grpc.Metadata): Observable<TestResponse>;
+
+        /**
+         * Takes a stream of requests
+         */
         StreamRequestMethod(request: Observable<TestRequest>, metaData?: grpc.Metadata): Observable<TestResponse>;
         StreamResponseMethod(request: TestRequest, metaData?: grpc.Metadata): Observable<TestResponse>;
         TestBidirectionalStream(request: Observable<TestRequest>, metaData?: grpc.Metadata): Observable<TestResponse>;
     }
 
     export interface TestRequest {
+
+        /**
+         * Name
+         */
         name: string;
     }
 
