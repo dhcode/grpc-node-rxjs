@@ -7,10 +7,12 @@
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "build-ts": "tsc",
-    "prepack": "tsc",
+    "preversion": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "generate-proto-typings": "ts-node src/generateTs.ts test-res/testservice.proto -o test-res/grpc-namespaces.ts"
+    "generate-proto-typings": "ts-node src/generateTs.ts test-res/testservice.proto -o test-res/grpc-namespaces.ts",
+    "publish-patch": "npm version patch && npm publish",
+    "publish-minor": "npm version minor && npm publish"
   },
   "bin": {
     "grpc-node-rxjs": "./bin/grpc-node-rxjs"
